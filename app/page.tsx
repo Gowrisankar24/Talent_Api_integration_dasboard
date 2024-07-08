@@ -24,7 +24,7 @@ import Box from "@mui/material/Box";
 import Loader from "@/app/dashboard/common/Loader";
 import { dashboardSelector, userlogin, getActivities, getHirings, getInterviewAndHiredDetails, getPostedJobList, getTodayMeetingDetailsList, getUpcomings, getPostedJobActiveList } from "@/store/reducers/dashboard";
 import {getCalenderview_1} from '@/store/reducers/calenderReducer'
-import { P_M_JOB_DESCRIPTIONS1, P_M_JOB_DESCRIPTIONS4 } from "@/constants/ROUTES";
+// import { P_M_JOB_DESCRIPTIONS1, P_M_JOB_DESCRIPTIONS4 } from "@/constants/ROUTES";
 // import { Calenderview } from "./dashboardx/P_M_Todo0/calenderview";
 import { Routes, Route } from 'react-router-dom';
 // import {App} from './App'
@@ -127,14 +127,14 @@ export default function Home() {
               <div className="col-lg-4 mt-3 mt-lg-0 text-center text-lg-end">
                 <Link
                   prefetch
-                  href={`${P_M_JOB_DESCRIPTIONS1}`}
+                  // href={`${P_M_JOB_DESCRIPTIONS1}`}
                   className="btn btn-light me-3 mx-lg-2"
                 >
                   JD Assets
                 </Link>
                 <Link
                   prefetch
-                  href={`${P_M_JOB_DESCRIPTIONS4}`}
+                  // href={`${P_M_JOB_DESCRIPTIONS4}`}
                   className="btn btn-blue bg-[#0a66c2!important]"
                 >
                   Create New JD

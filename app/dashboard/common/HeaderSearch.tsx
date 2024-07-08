@@ -68,9 +68,9 @@ function HeaderSearch() {
     setOpen(false);
   };
 
-  const handleChange = (event) => {
-    setFilterText(event.target.value);
-  };
+  // const handleChange = (event) => {
+  //   setFilterText(event.target.value);
+  // };
 
   const mockData = [
     "Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing.",
