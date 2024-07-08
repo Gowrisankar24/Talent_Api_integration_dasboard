@@ -28,10 +28,10 @@ import { dashboardSelector, userlogin, getActivities, getHirings, getInterviewAn
 // import {getCalenderview_1} from '@/store/reducers/calenderReducer'
 // import { P_M_JOB_DESCRIPTIONS1, P_M_JOB_DESCRIPTIONS4 } from "@/constants/ROUTES";
 // import { Calenderview } from "./dashboardx/P_M_Todo0/calenderview";
-import { Routes, Route } from 'react-router-dom';
+// import { Routes, Route } from 'react-router-dom';
 // import {App} from './App'
 import { BASE_URL } from "@/constants/ENVIRONMENT_VARIABLES";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 export default function Home() {
   // const router = useRouter();
   const [loading, setLoading] = useState(true);

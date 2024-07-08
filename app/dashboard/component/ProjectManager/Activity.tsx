@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { dashboardSelector } from '@/store/reducers/dashboard';
 
-function ActivityItem(props) {
+function ActivityItem(props:any) {
     return (
         <div className="row mt-4 align-items-center ">
             <div className="col-3 pe-0">

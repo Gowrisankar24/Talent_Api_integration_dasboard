@@ -132,7 +132,7 @@ export default function P_M_Todo0() {
     { value: "2024", label: "2024" },
     // Add more years as needed
   ];
-  const updateDate = (newDate, view) => {
+  const updateDate = (newDate:any, view:any) => {
     setDate(newDate);
     dispatch(getCalenderview_1({
       from_date: moment(newDate).startOf(view).format('YYYY-MM-DD'),
@@ -278,7 +278,7 @@ const eventsWithCount = Object.values(groupedEvents)?.map(eventsAtSameTime => {
       </div>
     )
   }
-  const CustomToolbar = ({ date, view, onNavigate, onView }) => {
+  const CustomToolbar = ({ date, view, onNavigate, onView }:any) => {
     const dateRange = () => {
         if (view === 'month') {
             return moment(date).format('MMMM YYYY');
@@ -293,7 +293,7 @@ const eventsWithCount = Object.values(groupedEvents)?.map(eventsAtSameTime => {
         }
         return '';
     };
-    const activeBtn = (buttonView) => {
+    const activeBtn = (buttonView:any) => {
         return view === buttonView ? 'btn-selected' : ''
     }
     return (
@@ -387,7 +387,7 @@ const Meetingstyle = {
   px: 4,
   pb: 3,
 };
-const startDate = getSingleData?.length > 0 ? moment(getSingleData[0]?.start).startOf('week').toDate() : new Date();
+// const startDate = getSingleData?.length > 0 ? moment(getSingleData[0]?.start).startOf('week').toDate() : new Date();
   return (
     <section className="">
       <div className="container-fluid my-md-5 my-4">
@@ -521,7 +521,7 @@ const startDate = getSingleData?.length > 0 ? moment(getSingleData[0]?.start).st
                       view={view}
                       views={{ month: true, week: true, day: true }} // Show only month, week, and day views
                       components={{ 
-                        toolbar: (props) => {
+                        toolbar: (props:any) => {
                           return(
                           <CustomToolbar 
                               {...props} 
@@ -538,7 +538,7 @@ const startDate = getSingleData?.length > 0 ? moment(getSingleData[0]?.start).st
                       onView={setView}
                       onNavigate={setDate}
                       onSelectSlot={handleSelectSlot}
-                      onSelectEvent={(event,e)=>handleSelect(event?.eventsAtSameTime,e)}
+                      onSelectEvent={(event:any,e:any)=>handleSelect(event?.eventsAtSameTime,e)}
                 /> 
               </div>
               {
@@ -598,7 +598,7 @@ const startDate = getSingleData?.length > 0 ? moment(getSingleData[0]?.start).st
                           defaultView={"week"}
                           style={{height:600, width:1200}}
                           components={{ 
-                            toolbar: (props) => {
+                            toolbar: (props:any) => {
                               return(
                               <CustomMeetToolBar 
                                   {...props}/>
