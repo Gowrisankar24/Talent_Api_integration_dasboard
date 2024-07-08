@@ -18,9 +18,9 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import NotificationsIcon from "@mui/icons-material/NotificationsOutlined";
 import MenuIcon from "@mui/icons-material/Menu";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+// import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { toggleTheme } from "@/store/reducers/theme";
-import { dashboardSelector, userLogout, getNotifications } from "@/store/reducers/dashboard";
+import { dashboardSelector, userLogout } from "@/store/reducers/dashboard";
 import { HOME, INTERVIEW_STATUS_FORM_1, P_M_MESSAGES, P_M_NOTIFICATIONS, P_M_PROFILE, P_M_REQUEST_STATUS_1,CalanderView } from "@/constants/ROUTES";
 const HeaderSearch = dynamic(() => import("./HeaderSearch"));
 

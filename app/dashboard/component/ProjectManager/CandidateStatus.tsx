@@ -1,5 +1,7 @@
 "use client";
-import { dashboardSelector, getCandidateStatusList } from "@/store/reducers/dashboard";
+import { dashboardSelector,
+  //  getCandidateStatusList
+   } from "@/store/reducers/dashboard";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
