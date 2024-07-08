@@ -9,9 +9,9 @@ function CandidateStatus() {
   const dispatch = useDispatch()
   const dashboardData = useSelector(dashboardSelector)
 
-  useEffect(() => {
-    dispatch(getCandidateStatusList())
-  }, [])
+  // useEffect(() => {
+  //   dispatch(getCandidateStatusList())
+  // }, [])
 
   return (
     <div className=" bg-white p-3 table-responsive ">

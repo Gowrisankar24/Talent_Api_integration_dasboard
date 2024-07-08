@@ -25,9 +25,9 @@ import Loader from "@/app/dashboard/common/Loader";
 import { dashboardSelector, userlogin, getActivities, getHirings, getInterviewAndHiredDetails, getPostedJobList, getTodayMeetingDetailsList, getUpcomings, getPostedJobActiveList } from "@/store/reducers/dashboard";
 import {getCalenderview_1} from '@/store/reducers/calenderReducer'
 import { P_M_JOB_DESCRIPTIONS1, P_M_JOB_DESCRIPTIONS4 } from "@/constants/ROUTES";
-import { Calenderview } from "./dashboardx/P_M_Todo0/calenderview";
+// import { Calenderview } from "./dashboardx/P_M_Todo0/calenderview";
 import { Routes, Route } from 'react-router-dom';
-import {App} from './App'
+// import {App} from './App'
 import { BASE_URL } from "@/constants/ENVIRONMENT_VARIABLES";
 import { useRouter } from "next/router";
 export default function Home() {
@@ -45,7 +45,7 @@ export default function Home() {
     dispatch(getActivities())
     dispatch(getHirings())
     dispatch(userlogin({Useremail:localStorage.getItem('useremail'),Password:localStorage.getItem('userPassword')}))
-    dispatch(getCalenderview_1({from_date: moment().startOf('month').format('YYYY-MM-DD') , to_date: moment().endOf('month').format('YYYY-MM-DD') }))
+    // dispatch(getCalenderview_1({from_date: moment().startOf('month').format('YYYY-MM-DD') , to_date: moment().endOf('month').format('YYYY-MM-DD') }))
   }, [])
 
   useEffect(() => {
@@ -277,9 +277,9 @@ export default function Home() {
                 </div>
                 
               </div>
-             <div className="mt-4 shadow bg-white">
+             {/* <div className="mt-4 shadow bg-white">
                 <Calenderview/>
-             </div>
+             </div> */}
             </div>
           </div>
         </div>

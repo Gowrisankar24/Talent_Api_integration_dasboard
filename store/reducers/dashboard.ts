@@ -2,7 +2,7 @@
 import { ACCESS_TOKEN } from "@/constants/ENVIRONMENT_VARIABLES";
 import {
   GET_ACTIVITIES_API,
-  GET_CANDIDATE_STATUS_API,
+  // GET_CANDIDATE_STATUS_API,
   GET_HIRED_API,
   GET_INTERVIEW_AND_HIRED_DETAILS_API,
   GET_POSTED_JOB_Active_LISTS_API,
@@ -10,10 +10,10 @@ import {
   GET_TICKET_LIST_API,
   GET_TODAY_MEETING_DETAILS_API,
   GET_UPCOMINGS_API,
-  INVENTORY_ASSETS_API,
+  // INVENTORY_ASSETS_API,
   LOGIN_API,
   LOGOUT_API,
-  NOTIFICATIONS_API,
+  // NOTIFICATIONS_API,
   USER_ACCOUNT_MANAGEMENT_ACCOUNT_API,
 } from "@/utils/API";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
@@ -48,10 +48,10 @@ const createAsyncThunkHandler = (apiFunction, propName, onLoginSuccess) =>
   });
 
 // Define async thunks using the helper function
-export const getCandidateStatusList = createAsyncThunkHandler(
-  GET_CANDIDATE_STATUS_API,
-  "candidate_status_list"
-);
+// export const getCandidateStatusList = createAsyncThunkHandler(
+//   GET_CANDIDATE_STATUS_API,
+//   "candidate_status_list"
+// );
 
 export const getInterviewAndHiredDetails = createAsyncThunkHandler(
   GET_INTERVIEW_AND_HIRED_DETAILS_API,
@@ -113,15 +113,15 @@ export const userAccountManagementAccount = createAsyncThunkHandler(
   "user_account_management"
 );
 
-export const inventoryAssets = createAsyncThunkHandler(
-  INVENTORY_ASSETS_API,
-  "inventory_Assets"
-);
+// export const inventoryAssets = createAsyncThunkHandler(
+//   INVENTORY_ASSETS_API,
+//   "inventory_Assets"
+// );
 
-export const getNotifications = createAsyncThunkHandler(
-  NOTIFICATIONS_API,
-  "notification_list"
-);
+// export const getNotifications = createAsyncThunkHandler(
+//   NOTIFICATIONS_API,
+//   "notification_list"
+// );
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState: {

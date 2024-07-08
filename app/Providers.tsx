@@ -25,10 +25,10 @@ export function Providers({ children }: any) {
         // Default options for specific types
         success: {
           duration: 3000,
-          theme: {
-            primary: 'green',
-            secondary: 'black',
-          },
+          // theme: {
+          //   primary: 'green',
+          //   secondary: 'black',
+          // },
         },
       }}
     />

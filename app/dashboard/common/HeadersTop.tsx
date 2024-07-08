@@ -33,9 +33,9 @@ function HeadersTop() {
   const dashboardData = useSelector(dashboardSelector)
   // const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
-  useEffect(() => {
-    dispatch(getNotifications())
-  }, [])
+  // useEffect(() => {
+  //   dispatch(getNotifications())
+  // }, [])
   const handleLogout = async () => {
     let data = {
       "refresh_token": dashboardData?.login?.refresh_token
