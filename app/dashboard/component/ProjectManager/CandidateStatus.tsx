@@ -70,7 +70,7 @@ function CandidateStatus() {
                 ) : null}
 
                 <td>
-                  <Link className="btn" href={`CandidatesStatus3/${list?.candidate_details?.id}`}>
+                  <Link className="btn" href={`/CandidatesStatus3/${list?.candidate_details?.id}`}>
                     <img src="image/eye-black.png" alt="" className="text-muted text-dark" />
                     {/* <i className="fa fa-eye text-muted" aria-hidden="true"></i> */}
                   </Link>

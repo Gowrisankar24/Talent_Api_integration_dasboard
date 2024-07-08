@@ -7,6 +7,10 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  include: [
+    "src",
+    "react-big-calendar.d.ts"
+  ],
   theme: {
     extend: {
       backgroundImage: {
