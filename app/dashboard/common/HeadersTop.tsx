@@ -36,16 +36,16 @@ function HeadersTop() {
   // useEffect(() => {
   //   dispatch(getNotifications())
   // }, [])
-  const handleLogout = async () => {
-    let data = {
-      "refresh_token": dashboardData?.login?.refresh_token
-    }
-    if (dashboardData?.login.refresh_token) {
-      await dispatch(userLogout(data))
-    } else {
-      console.warn('else')
-    }
-  }
+  // const handleLogout = async () => {
+  //   let data = {
+  //     "refresh_token": dashboardData?.login?.refresh_token
+  //   }
+  //   if (dashboardData?.login.refresh_token) {
+  //     await dispatch(userLogout(data))
+  //   } else {
+  //     console.warn('else')
+  //   }
+  // }
 
   const handleThemeToggle = () => {
     dispatch(toggleTheme());
@@ -124,7 +124,9 @@ function HeadersTop() {
         </Link>
       </MenuItem>
       <MenuItem onClick={handleMenuTwoClose}>
-        <Link className="text-[14px]" href="#" onClick={handleLogout}>
+        <Link className="text-[14px]" href="#" 
+        // onClick={handleLogout}
+        >
           Sign Out
         </Link>
       </MenuItem>
