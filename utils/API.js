@@ -4,9 +4,7 @@ import { AXIOS_CLIENT } from "@/utils/AXIOS_CLIENT";
 const makeRequest = async (endpoint, data, method = "post") => {
   try {
     let response = await AXIOS_CLIENT[method](endpoint, data);
-
-    let result = await response?.data;
-
+    let result = response?.data;
     if (result) {
       console.warn(`--=${endpoint}===`, result);
       return result;
@@ -102,25 +100,10 @@ export const GET_CANDIDATE_DETAILS_API = ({ candidate_id, job_id }) => {
 export const LOGIN_API = (data) =>
   makeRequest(API_ENDPOINTS.LOGIN_ENDPOINT, data);
 
+
 export const LOGOUT_API = ({ data }) =>
   makeRequest(API_ENDPOINTS.LOGOUT_ENDPOINT, data);
 
 export const USER_ACCOUNT_MANAGEMENT_ACCOUNT_API = () =>
   makeRequest(API_ENDPOINTS.USER_ACCOUNT_MANAGEMENT_ACCOUNT, null, "get");
 
-export const INVENTORY_ASSETS_API = () =>
-  makeRequest(
-    API_ENDPOINTS.INVENTORY_ASSETS,
-    {
-      filter_by: "all",
-    },
-    "get"
-  );
-
-export const NOTIFICATIONS_API = () =>
-  makeRequest(API_ENDPOINTS.NOTIFICATIONS_ENDPOINT, {
-    filter_by: "Not Read",
-  });
-
-export const GET_COUNTRIES_API = () =>
-  makeRequest(API_ENDPOINTS.COUNTRY_LIST_ENDPOINT, null, "get");

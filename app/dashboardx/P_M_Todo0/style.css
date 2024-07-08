@@ -68,7 +68,37 @@
     color: #000 !important;
 }
 
-
 .rbc-day-slot .rbc-event-label{
     display: none;
+}
+.btn-selected.MuiButtonGroup-grouped{
+  background: #4f81cb !important;
+  color: #000 !important;
+}
+.rbc-month-row,
+.rbc-time-row {
+  height: 600px !important;
+  min-height: 100px; /* Adjust the minimum height of each row */
+}
+.custom-calendar-container .rbc-event{
+  width: 40% !important;
+}
+
+.rbc-calendar .rbc-event, .rbc-calendar .rbc-day-slot .rbc-background-event, .rbc-row-segment .rbc-event {
+  background-color: #fafbfc !important;
+}
+.custom-event{
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  /* width: 20vw; */
+}
+.event-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }

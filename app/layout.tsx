@@ -7,6 +7,7 @@ import "@/app/dashboard/assets/css/responsive.css";
 import { Providers } from "./Providers";
 import HeadersTop from "@/app/dashboard/common/HeadersTop";
 import { Metadata } from "next";
+import { Route, Router } from "react-router-dom";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,10 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ paddingTop: 50 }} className={inter.className}>
-        <Providers>
-          <HeadersTop />
-          {children}
-        </Providers>
+          <Providers>
+            <HeadersTop />
+            {children}
+          </Providers>
       </body>
     </html>
   );

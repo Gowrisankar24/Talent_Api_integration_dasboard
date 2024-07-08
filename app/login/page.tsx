@@ -12,11 +12,10 @@ import { useRouter } from "next/navigation";
 
 
 function Login() {
-
     const [user, setUser] = useState({ Useremail: "", Password: "" })
     const loginDetails = useSelector(dashboardSelector)
-
-
+    // const userData = useSelector((state)=>state?.userlogin);
+    // console.log('userData', loginDetails)
     const dispatch = useDispatch()
     const router = useRouter()
     const handleLogin = () => {
@@ -24,14 +23,15 @@ function Login() {
             toast.error("Please Enter email");
             return
         }
-
         if (!user.Password) {
             toast.error("Please Enter Password");
             return
-        }
-        dispatch(userlogin(user))
+        }  
+        localStorage.setItem('useremail',user?.Useremail)
+        localStorage.setItem('userPassword',user?.Password)
+        dispatch(userlogin(user));
     }
-
+    // console.log('user', user)
     const handleChange = (event) => {
         const { name, value } = event.target;
         setUser((prev) => ({
@@ -40,11 +40,10 @@ function Login() {
         }))
     }
     useEffect(() => {
-        if (loginDetails.access_token) {
+        if (loginDetails?.login?.access_token) {
             router.push(HOME)
         }
-    }, [loginDetails])
-
+    }, [loginDetails, router])
     return (
         <div className="h-[100vh] bg-blue d-flex align-items-center justify-content-center px-3">
             <div className="shadow bg-white mt-4 rounded-3 pb-3 col-lg-5 col-md-8 my-md-5 mx-auto p-md-5 p-3">

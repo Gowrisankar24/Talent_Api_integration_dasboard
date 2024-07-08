@@ -2,14 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-
+import moment from 'moment'
 import ApplicationsReceived from "@/app/dashboard/component/ProjectManager/ApplicationsReceived";
 import SideMenu from "@/app/dashboard/component/SideMenu";
 import TotalEmployees from "@/app/dashboard/component/ProjectManager/TotalEmployees";
 import NumberofVacancies from "@/app/dashboard/component/ProjectManager/NumberofVacancies";
 import Number_of_Interviews from "@/app/dashboard/component/ProjectManager/Number_of_Interviews";
 import TodayInterviews from "@/app/dashboard/component/ProjectManager/TodayInterviews";
-
 import PostedJobsCard from "@/app/dashboard/component/ProjectManager/PostedJobsCard";
 import CandidateStatus from "@/app/dashboard/component/ProjectManager/CandidateStatus";
 import PostedJobsTop from "@/app/dashboard/component/ProjectManager/PostedJobsTop";
@@ -24,14 +23,19 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Loader from "@/app/dashboard/common/Loader";
 import { dashboardSelector, userlogin, getActivities, getHirings, getInterviewAndHiredDetails, getPostedJobList, getTodayMeetingDetailsList, getUpcomings, getPostedJobActiveList } from "@/store/reducers/dashboard";
+import {getCalenderview_1} from '@/store/reducers/calenderReducer'
 import { P_M_JOB_DESCRIPTIONS1, P_M_JOB_DESCRIPTIONS4 } from "@/constants/ROUTES";
-
+import { Calenderview } from "./dashboardx/P_M_Todo0/calenderview";
+import { Routes, Route } from 'react-router-dom';
+import {App} from './App'
+import { BASE_URL } from "@/constants/ENVIRONMENT_VARIABLES";
+import { useRouter } from "next/router";
 export default function Home() {
+  // const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [value, setValue] = useState(0);
   const dispatch = useDispatch()
   const dashboardData = useSelector(dashboardSelector)
-
   useEffect(() => {
     dispatch(getInterviewAndHiredDetails())
     dispatch(getPostedJobList())
@@ -40,7 +44,8 @@ export default function Home() {
     dispatch(getUpcomings())
     dispatch(getActivities())
     dispatch(getHirings())
-    dispatch(userlogin())
+    dispatch(userlogin({Useremail:localStorage.getItem('useremail'),Password:localStorage.getItem('userPassword')}))
+    dispatch(getCalenderview_1({from_date: moment().startOf('month').format('YYYY-MM-DD') , to_date: moment().endOf('month').format('YYYY-MM-DD') }))
   }, [])
 
   useEffect(() => {
@@ -99,16 +104,16 @@ export default function Home() {
 
   const activeJobsData = dashboardData?.posted_job_list
   const inactiveJobsData = dashboardData?.posted_job_active_list
-
-  //tab end
   return (
     <main className="">
       <section className="container-fluid my-md-5 my-4">
         <div className="row">
           <div className="col-lg-1 leftMenuWidth ps-0 position-relative">
             <SideMenu />
+            {/* <Routes>
+              <Route path="/calendarview" element={<Calenderview/>}/>
+            </Routes> */}
           </div>
-
           <div className="col-lg-11 pe-lg-4 ps-lg-0">
             <div className="row justify-content-between  align-items-center">
               <div className="col-lg-8 projectText">
@@ -122,14 +127,14 @@ export default function Home() {
               <div className="col-lg-4 mt-3 mt-lg-0 text-center text-lg-end">
                 <Link
                   prefetch
-                  href={P_M_JOB_DESCRIPTIONS1}
+                  href={`${P_M_JOB_DESCRIPTIONS1}`}
                   className="btn btn-light me-3 mx-lg-2"
                 >
                   JD Assets
                 </Link>
                 <Link
                   prefetch
-                  href={P_M_JOB_DESCRIPTIONS4}
+                  href={`${P_M_JOB_DESCRIPTIONS4}`}
                   className="btn btn-blue bg-[#0a66c2!important]"
                 >
                   Create New JD
@@ -222,7 +227,7 @@ export default function Home() {
                     <hr className="mt-0" />
                     <CustomTabPanel className="p-0" value={value} index={0}>
                       <div className="row px-3 pb-3">
-                        {inactiveJobsData?.map((job: any, index: any) => (
+                        {inactiveJobsData?.length>0 && inactiveJobsData?.map((job: any, index: any) => (
                           <PostedJobsCard key={index} {...job} />
                         ))}
                       </div>
@@ -233,9 +238,11 @@ export default function Home() {
                       index={1}
                     >
                       <div className="row px-3 pb-3">
-                        {activeJobsData?.map((job: any, index: any) => (
-                          <PostedJobsCard key={index} {...job} />
-                        ))}
+                      {Array.isArray(activeJobsData) && activeJobsData?.length > 0 && (
+                           activeJobsData?.map((job, index) => (
+                                    <PostedJobsCard key={index} {...job} />
+                            ))
+                       )}
                       </div>
                     </CustomTabPanel>
                   </Box>
@@ -268,7 +275,11 @@ export default function Home() {
                 <div className="mt-5">
                   <HiringCandidates />
                 </div>
+                
               </div>
+             <div className="mt-4 shadow bg-white">
+                <Calenderview/>
+             </div>
             </div>
           </div>
         </div>

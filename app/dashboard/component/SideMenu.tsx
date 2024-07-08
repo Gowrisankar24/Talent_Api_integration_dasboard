@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+// import { Link as LinkedRoute, useNavigate, useLocation } from 'react-router-dom';
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -16,17 +17,18 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { usePathname } from "next/navigation";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { usePathname, useRouter } from "next/navigation";
 import "./style.css";
+import { CalanderView, P_M_TODO_0 } from "@/constants/ROUTES";
 
 const SideMenu = () => {
   const [open, setOpen] = React.useState<boolean>(false);
   const pathname = usePathname();
-
+  const router = useRouter()
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
-
   // mobile size code start
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={() => setOpen(false)}>
@@ -149,7 +151,7 @@ const SideMenu = () => {
           <img src="image/menuSElect.png" alt="" />
           <ul className="subMainSideMenu">
             <li className="subSideMenu">
-              <Link prefetch href="/P_M_Todo0">
+              <Link prefetch href={`${P_M_TODO_0}`}>
                 Calendar
               </Link>
             </li>
@@ -228,22 +230,22 @@ const SideMenu = () => {
         </li>
 
         <li className="ListSideMEnu">
-          <Link
+          {/* <Link
             prefetch
             href="/CandidatesStatus0"
             className={pathname === "/CandidatesStatus0" ? "active" : ""}
-          >
+          > */}
             <img src="image/Frame.png" alt="" />
-          </Link>
+          {/* </Link> */}
           <ul className="subMainSideMenu">
             <li className="subSideMenu">
-              <Link
+              {/* <Link
                 prefetch
                 href="/CandidatesStatus0"
                 className={pathname === "/CandidatesStatus0" ? "active" : ""}
-              >
+              > */}
                 Candidate Status
-              </Link>
+              {/* </Link> */}
             </li>
           </ul>
         </li>

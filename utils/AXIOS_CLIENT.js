@@ -1,20 +1,27 @@
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { deleteCookie } from ".";
 import toast from "react-hot-toast";
-import { BASE_URL } from "@/constants/ENVIRONMENT_VARIABLES";
-
+import { BASE_URL, ACCESS_TOKEN } from "@/constants/ENVIRONMENT_VARIABLES";
+import { LOGIN_ENDPOINT } from "@/constants/API_ENDPOINTS";
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
 export const AXIOS_CLIENT = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  cancelToken: source.token,
 });
 
 AXIOS_CLIENT.interceptors.request.use(
   (config) => {
-    const token = "asdf";
+    const token = Cookies.get(ACCESS_TOKEN);
     if (token) {
-      config.headers["Authorization"] = "Bearer " + token;
+      const { access_token } = JSON.parse(token);
+      if (access_token) {
+        config.headers["Authorization"] = "Bearer " + access_token;
+      }
     }
     return config;
   },
@@ -35,10 +42,30 @@ AXIOS_CLIENT.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
+  async (error) => {
     const config = error.config;
-    if (!config) {
+    if (error.response && error.response.status === 401 && config) {
       // Handle the case where config is undefined
+      const tokenData = Cookies.get(ACCESS_TOKEN);
+      // console.log('axios', tokenData, 'err', config)
+      if (tokenData) {
+        const { refresh_token } = JSON.parse(tokenData);
+        if (refresh_token) {
+          try {
+            const response = await axios.post(`${BASE_URL + LOGIN_ENDPOINT}`, { token: refresh_token })
+            const { access_token } = response?.data;
+            const updatedTokenData = { ...JSON.parse(tokenData), access_token };
+            Cookies.set(ACCESS_TOKEN, JSON.stringify(updatedTokenData));
+            AXIOS_CLIENT.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+            config.headers['Authorization'] = `Bearer ${access_token}`;
+            return AXIOS_CLIENT(config);
+          } catch (error) {
+            console.error('Token refresh failed:', error);
+            deleteCookie(ACCESS_TOKEN);
+            return Promise.reject(error);
+          }
+        }
+      }
       console.error("Request configuration is undefined:", error);
       return Promise.reject(error);
     }

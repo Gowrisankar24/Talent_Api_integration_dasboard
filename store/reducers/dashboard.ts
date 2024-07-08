@@ -17,11 +17,10 @@ import {
   USER_ACCOUNT_MANAGEMENT_ACCOUNT_API,
 } from "@/utils/API";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
 import Cookies from "js-cookie"; // Import the js-cookie library
 
 // Helper function to handle common async thunk logic
-const createAsyncThunkHandler = (apiFunction, propName, onLoginSuccess?) =>
+const createAsyncThunkHandler = (apiFunction, propName, onLoginSuccess) =>
   createAsyncThunk(`dashboard/${propName}`, async (data: any) => {
     try {
       // Call the API function with provided data
@@ -31,12 +30,15 @@ const createAsyncThunkHandler = (apiFunction, propName, onLoginSuccess?) =>
       } else {
         response = await apiFunction();
       }
-
       // If there's a login success callback, call it with the response
-      if (onLoginSuccess && propName === "login") {
+      if (onLoginSuccess && propName === "login" && response?.access_token) {
+        const { access_token, user_email, user_id, refresh_token } = response;
+        Cookies.set(
+          ACCESS_TOKEN,
+          JSON.stringify({ access_token, user_email, user_id, refresh_token })
+        );
         onLoginSuccess(response);
       }
-
       return response;
     } catch (error) {
       // Handle error
@@ -88,16 +90,16 @@ export const getHirings = createAsyncThunkHandler(
 export const userlogin = createAsyncThunkHandler(
   LOGIN_API,
   "login",
-  (response) => {
-    // Assuming response contains session information such as user data, access token, etc.
+ (response) => {  
     const { access_token, user_email, user_id, refresh_token } = response;
-    // Store user data and access token in cookies
     Cookies.set(
       ACCESS_TOKEN,
       JSON.stringify({ access_token, user_email, user_id, refresh_token })
     );
   }
 );
+
+
 
 export const getTicketList = createAsyncThunkHandler(
   GET_TICKET_LIST_API,
@@ -134,7 +136,7 @@ const dashboardSlice = createSlice({
     ticket_List: [],
     inventory_Assets: [],
     notification_list: [],
-    login: {},
+    login: [],
     logout: {},
     user_account_management: {},
     loading: false,
@@ -142,6 +144,16 @@ const dashboardSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(userlogin.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(userlogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.login = action.payload; 
+      })
+      .addCase(userlogin.rejected, (state) => {
+        state.loading = false;
+      })
       .addMatcher(
         (action) =>
           action.type.startsWith("dashboard/") &&
@@ -167,9 +179,11 @@ const dashboardSlice = createSlice({
         (state) => {
           state.loading = false;
         }
-      );
+      )
+      
+      
   },
 });
-
 export const dashboardSelector = (state: any) => state.dashboard;
 export default dashboardSlice.reducer;
+

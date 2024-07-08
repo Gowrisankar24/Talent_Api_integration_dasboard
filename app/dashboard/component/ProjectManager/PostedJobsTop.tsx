@@ -50,7 +50,7 @@ function PostedJobsTop(props: {
           <h6>
             <Link
               className={`text-blue text-[14px]  ${props?.classSamll}`}
-              href={props?.viewAllPath}
+              href={`${props?.viewAllPath}`}
               prefetch
             >
               {props?.samllText}
