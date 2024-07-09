@@ -22,9 +22,11 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Loader from "@/app/dashboard/common/Loader";
-import { dashboardSelector, userlogin, getActivities, getHirings, getInterviewAndHiredDetails, getPostedJobList, 
+import {
+  dashboardSelector, userlogin, getActivities, getHirings, getInterviewAndHiredDetails, getPostedJobList,
   // getTodayMeetingDetailsList, 
-  getUpcomings, getPostedJobActiveList } from "@/store/reducers/dashboard";
+  getUpcomings, getPostedJobActiveList
+} from "@/store/reducers/dashboard";
 // import {getCalenderview_1} from '@/store/reducers/calenderReducer'
 // import { P_M_JOB_DESCRIPTIONS1, P_M_JOB_DESCRIPTIONS4 } from "@/constants/ROUTES";
 // import { Calenderview } from "./dashboardx/P_M_Todo0/calenderview";
@@ -46,7 +48,7 @@ export default function Home() {
     dispatch(getUpcomings())
     dispatch(getActivities())
     dispatch(getHirings())
-    dispatch(userlogin({Useremail:localStorage.getItem('useremail'),Password:localStorage.getItem('userPassword')}))
+    dispatch(userlogin({ Useremail: localStorage.getItem('useremail'), Password: localStorage.getItem('userPassword') }))
     // dispatch(getCalenderview_1({from_date: moment().startOf('month').format('YYYY-MM-DD') , to_date: moment().endOf('month').format('YYYY-MM-DD') }))
   }, [])
 
@@ -62,13 +64,13 @@ export default function Home() {
 
 
   // tab start
-  interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-  }
+  // interface TabPanelProps {
+  //   children?: React.ReactNode;
+  //   index: number;
+  //   value: number;
+  // }
 
-  function CustomTabPanel(props: TabPanelProps) {
+  function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
 
     return (
@@ -88,7 +90,7 @@ export default function Home() {
     );
   }
 
-  function a11yProps(index: number) {
+  function a11yProps(index) {
     return {
       id: `simple-tab-${index}`,
       "aria-controls": `simple-tabpanel-${index}`,
@@ -96,7 +98,7 @@ export default function Home() {
   }
 
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
@@ -229,7 +231,7 @@ export default function Home() {
                     <hr className="mt-0" />
                     <CustomTabPanel className="p-0" value={value} index={0}>
                       <div className="row px-3 pb-3">
-                        {inactiveJobsData?.length>0 && inactiveJobsData?.map((job: any, index: any) => (
+                        {inactiveJobsData?.length > 0 && inactiveJobsData?.map((job, index) => (
                           <PostedJobsCard key={index} {...job} />
                         ))}
                       </div>
@@ -240,11 +242,11 @@ export default function Home() {
                       index={1}
                     >
                       <div className="row px-3 pb-3">
-                      {Array.isArray(activeJobsData) && activeJobsData?.length > 0 && (
-                           activeJobsData?.map((job, index) => (
-                                    <PostedJobsCard key={index} {...job} />
-                            ))
-                       )}
+                        {Array.isArray(activeJobsData) && activeJobsData?.length > 0 && (
+                          activeJobsData?.map((job, index) => (
+                            <PostedJobsCard key={index} {...job} />
+                          ))
+                        )}
                       </div>
                     </CustomTabPanel>
                   </Box>
@@ -277,9 +279,9 @@ export default function Home() {
                 <div className="mt-5">
                   <HiringCandidates />
                 </div>
-                
+
               </div>
-             {/* <div className="mt-4 shadow bg-white">
+              {/* <div className="mt-4 shadow bg-white">
                 <Calenderview/>
              </div> */}
             </div>

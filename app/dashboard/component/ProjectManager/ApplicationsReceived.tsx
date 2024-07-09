@@ -17,7 +17,7 @@ function ApplicationsReceived() {
               />
             </div>
             <div>
-              <h1 className="text-white text-[35px] mt-auto lg:text-[40px] mt-4">
+              <h1 className="text-white text-[35px]lg:text-[40px] mt-4">
                 2024
               </h1>
               <h5 className="text-white text-[10px] lg:text-[16px] mt-lg-3 mt-2">

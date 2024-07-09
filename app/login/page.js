@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { HOME } from "@/constants/ROUTES";
 import { useRouter } from "next/navigation";
+import store from "@/store/store";
 
 
 function Login() {
@@ -26,9 +27,9 @@ function Login() {
         if (!user.Password) {
             toast.error("Please Enter Password");
             return
-        }  
-        localStorage.setItem('useremail',user?.Useremail)
-        localStorage.setItem('userPassword',user?.Password)
+        }
+        localStorage.setItem('useremail', user?.Useremail)
+        localStorage.setItem('userPassword', user?.Password)
         dispatch(userlogin(user));
     }
     // console.log('user', user)

@@ -36,8 +36,8 @@
     ".next/types/**/*.ts",
     "app/dashboard/component/ProjectManager/CalendarProject.jsx",
     "app/dashboard/component/ProjectManager/ScheduledInterviewsGraph.tsx",
-    "app/logindddd/page.tsx"
-  ],
+    "app/login/page.js"
+, "app/dashboardx/P_M_Todo0/page.js", "app/login/page.js", "app/page.js", "store/reducers/meetingReducer.js", "store/reducers/dashboard.js", "store/reducers/calenderReducer.js"  ],
   "exclude": [
     "node_modules"
   ]
