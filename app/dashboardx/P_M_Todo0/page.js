@@ -88,7 +88,6 @@ export default function P_M_Todo0() {
       setEvents([])
     }
   }, [calenderOneData])
-
   useEffect(() => {
     if (meetingLinkData) {
       const eventsmap = {
@@ -101,9 +100,10 @@ export default function P_M_Todo0() {
         status: meetingLinkData?.status,
         comment: meetingLinkData?.comment,
         score: meetingLinkData?.score,
+        created_by: meetingLinkData?.user_det?.handled_by?.firstName,
         link: meetingLinkData?.link,
       };
-      setDefaultDate(moment(eventsmap?.start).startOf('day').toDate() || new Date())
+      setDefaultDate(moment(meetingLinkData?.start).startOf('day').toDate() || new Date())
       setGetSingleData([eventsmap]);
     } else {
       setGetSingleData([]);
@@ -264,6 +264,7 @@ export default function P_M_Todo0() {
     return (
       <div className="custom-event">
         <div className="event-title">{event?.title}</div>
+        <div className="text-md">Created By: {event?.created_by}</div>
         <div className="text-md">interview Date: {' '}{moment(event.start).format('DD-MM-YYYY')}</div>
         <div className="text-md">interview Time: {' '}{moment(event.start).format('hh:mm A')}-{moment(event.end).format('hh:mm A')}</div>
         <div className="text-md">Interview via:G-Meet</div>
@@ -510,12 +511,12 @@ export default function P_M_Todo0() {
                   startAccessor="start"
                   endAccessor="end"
                   style={{ height: 1000 }}
-                  defaultView={"week"}
-                  timeslots={4} // number of per section
+                  defaultView={"month"}
+                  timeslots={4}
                   step={15}
                   view={view}
-                  views={{ month: true, week: true, day: true }} // Show only month, week, and day views
-                  components={{
+                  views={{ month: true, week: true, day: true, year: true }} // Show only month, week, and day views
+                  components={view != 'year' ? {
                     toolbar: (props) => {
                       return (
                         <CustomToolbar
@@ -527,7 +528,7 @@ export default function P_M_Todo0() {
                         />)
                     },
                     event: CustomEvent
-                  }}
+                  } : ('')}
                   formats={{
                     dayFormat: "EEEE",
                   }}
@@ -587,6 +588,7 @@ export default function P_M_Todo0() {
                     {
                       getSingleData?.length > 0 && (
                         <Calendar
+                          className="TodoDataTable"
                           localizer={localizer}
                           events={getSingleData}
                           startAccessor="start"

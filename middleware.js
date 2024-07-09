@@ -7,7 +7,8 @@ const Middleware = (req) => {
   let NEXT_TOKEN = process.env.NEXT_PUBLIC_ACCESS_TOKEN;
   const cookieData = req.cookies.get(NEXT_TOKEN);
   const pathName = req.nextUrl.pathname;
-
+  const isProd = process.env.NEXT_PUBLIC_MY_URL === 'production';
+  const roourl = isProd ? 'https://talent-api-integration-dasboard.vercel.app/' : 'http://localhost:3000'
   if (pathName.toLowerCase() === "/login") {
     if (cookieData && cookieData?.value) {
       return NextResponse.redirect("http://localhost:3000");
