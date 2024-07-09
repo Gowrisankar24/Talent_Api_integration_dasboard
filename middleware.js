@@ -11,7 +11,7 @@ const Middleware = (req) => {
   const roourl = isProd ? 'https://talent-api-integration-dasboard.vercel.app/' : 'http://localhost:3000'
   if (pathName.toLowerCase() === "/login") {
     if (cookieData && cookieData?.value) {
-      return NextResponse.redirect("http://localhost:3000");
+      return NextResponse.redirect(roourl);
     }
   }
 
@@ -27,12 +27,12 @@ const Middleware = (req) => {
       let parsedEndTime = parseDateString(endTime);
       if (decoded && parsedBeginningTime > parsedEndTime) {
         req.cookies.has(NEXT_TOKEN) && req.cookies.delete(NEXT_TOKEN);
-        return NextResponse.redirect("http://localhost:3000" + "/login");
+        return NextResponse.redirect(roourl + "/login");
       } else {
         return NextResponse.next();
       }
     } else {
-      return NextResponse.redirect("http://localhost:3000" + "/login");
+      return NextResponse.redirect(roourl + "/login");
     }
   }
   return NextResponse.next();
