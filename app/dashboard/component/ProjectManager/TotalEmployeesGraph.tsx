@@ -50,7 +50,7 @@ function TotalEmployeesGraph({ totalEmloyeesCount, count, color }: any) {
       {...size}
       sx={overrideStyles}
       colors={colors}
-      tooltip={false}
+      // tooltip={false}
     >
       <PieCenterLabel>{count}</PieCenterLabel>
     </PieChart>

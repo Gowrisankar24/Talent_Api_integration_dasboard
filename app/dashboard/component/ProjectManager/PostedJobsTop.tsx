@@ -7,8 +7,7 @@ import {
   ReactElement,
   JSXElementConstructor,
   ReactNode,
-  ReactPortal,
-  PromiseLikeOfReactNode,
+  ReactPortal
 } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
@@ -23,9 +22,14 @@ function PostedJobsTop(props: {
     | ReactElement<any, string | JSXElementConstructor<any>>
     | Iterable<ReactNode>
     | ReactPortal
-    | PromiseLikeOfReactNode
     | null
     | undefined;
+    className?: string;
+    classTitle?: string;
+    classSamll?: string;
+    viewAllPath?: string;
+    samllText?: string;
+    filterBtnClass?: string;
 }) {
   // filter btn
   const [filterBtn, setfilterBtn] = React.useState<null | HTMLElement>(null);
