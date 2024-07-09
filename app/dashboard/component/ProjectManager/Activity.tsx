@@ -59,7 +59,7 @@ export default function Activity() {
                 </Link>
             </div>
 
-            {dashboardData?.activities_list?.slice(0, 3).map((appointment, index) => (
+            {dashboardData?.activities_list?.slice(0, 3).map((appointment:any, index:number) => (
                 <ActivityItem key={index} {...appointment} />
             ))}
         </div>

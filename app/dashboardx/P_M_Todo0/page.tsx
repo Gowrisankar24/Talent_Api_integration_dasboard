@@ -39,7 +39,6 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
-
 export default function P_M_Todo0() {
   const dispatch = useDispatch();
   const myEventsList = [
@@ -73,7 +72,7 @@ export default function P_M_Todo0() {
 
  useEffect(()=>{
   if(calenderOneData&& calenderOneData?.length>0){
-    const eventsmap = calenderOneData?.map(event => ({
+    const eventsmap = calenderOneData?.map((event:any) => ({
       id: event?.id,
       title: event?.summary,
       desc: event?.desc,
