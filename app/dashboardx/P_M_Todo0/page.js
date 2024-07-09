@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale";
@@ -28,17 +28,13 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Modal from '@mui/material/Modal';
 import { getMeetingView } from "@/store/reducers/meetingReducer";
+import GMeetLogo from '../../../public/image/Gmeet.png'
+import { isEmpty } from "lodash";
 const locales = {
   "en-US": enUS,
 };
 
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
+const localizer = momentLocalizer(moment)
 export default function P_M_Todo0() {
   const dispatch = useDispatch();
   const myEventsList = [
@@ -58,20 +54,25 @@ export default function P_M_Todo0() {
   const [getSingleData, setGetSingleData] = useState([])
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [events, setEvents] = useState([]);
-  const [DefaultDate, setDefaultDate] = useState(new Date())
+  const [DefaultDate, setDefaultDate] = useState('')
+  const [minDateTime, setMinDateTime] = useState('')
+  const [maxDateTime, setMaxDateTime] = useState('')
   const calenderOneData = useSelector((state) => state?.calender_1_Slice?.data);
+  const calenderOneDataLoader = useSelector((state) => state?.calender_1_Slice?.loading);
   const meetingLinkData = useSelector((state) => state?.getMeetingViewSlice?.data);
+  const meetingLinkDataLoader = useSelector((state) => state?.getMeetingViewSlice?.loading);
   // const defaultDate =moment(meetingLinkData?.start).startOf('week').toDate()
-
   useEffect(() => {
     const newDate = moment(date).toDate();
     setView('week')
     setDate(newDate)
+    setActiveEventModal(false)
+    setMeetingView(false)
     dispatch(getCalenderview_1({ from_date: moment(newDate).startOf('week').format('YYYY-MM-DD'), to_date: moment(newDate).endOf('week').format('YYYY-MM-DD') }));
   }, [])
 
   useEffect(() => {
-    if (calenderOneData && calenderOneData?.length > 0) {
+    if (!isEmpty(calenderOneData)) {
       const eventsmap = calenderOneData?.map((event) => ({
         id: event?.id,
         title: event?.summary,
@@ -89,7 +90,7 @@ export default function P_M_Todo0() {
     }
   }, [calenderOneData])
   useEffect(() => {
-    if (meetingLinkData) {
+    if (!isEmpty(meetingLinkData)) {
       const eventsmap = {
         id: meetingLinkData?.id,
         title: meetingLinkData?.summary,
@@ -103,7 +104,9 @@ export default function P_M_Todo0() {
         created_by: meetingLinkData?.user_det?.handled_by?.firstName,
         link: meetingLinkData?.link,
       };
-      setDefaultDate(moment(meetingLinkData?.start).startOf('day').toDate() || new Date())
+      setDefaultDate(moment(meetingLinkData?.start).startOf('day').toDate())
+      setMinDateTime(moment(meetingLinkData?.start).toDate())
+      setMaxDateTime(moment(meetingLinkData?.start).endOf('day').toDate())
       setGetSingleData([eventsmap]);
     } else {
       setGetSingleData([]);
@@ -169,9 +172,14 @@ export default function P_M_Todo0() {
   };
 
   const handleSelect = (event, e) => {
-    // const { start, end } = event;
-    setModalEvent(event)
-    setActiveEventModal(true);
+    if (event?.length > 1) {
+      setModalEvent(event)
+      setActiveEventModal(true);
+    } else if (event?.length == 1) {
+      setMeetingView(true)
+      setActiveEventModal(false)
+      dispatch(getMeetingView({ id: event[0]?.id }))
+    }
     // setPosition({ x: e.clientX, y: e.clientY });
   };
 
@@ -207,7 +215,7 @@ export default function P_M_Todo0() {
     // dispatch(getCalenderview_1({ from_date: moment().format('YYYY-MM-DD'), to_date: moment().format('YYYY-MM-DD')}))
   };
   const groupedEvents = events && events?.reduce((groups, event) => {
-    const key = event?.start?.getTime(); // Use timestamp as key for grouping
+    const key = moment(event.start).format('YYYY-MM-DDTHH:mm:ss')// Use timestamp as key for grouping
     if (!groups[key]) {
       groups[key] = [];
     }
@@ -226,51 +234,52 @@ export default function P_M_Todo0() {
   const CustomEvent = ({ event }) => {
     return (
       <>
-        {event?.count > 1 ? (
-          <>
-            <div className="calendarTopSection">
-              <Badge badgeContent={event.count} color='warning' anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-                <ul>
-                  <li className="text-[12px] py-1">{event.title}</li>
-                  <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                  <li className="text-[12px] py-1">Time : {moment(event.start).format('hh:mm A')} - {moment(event.end).format('hh:mm A')}</li>
-                  <li className="text-[12px] py-1">Via : Google Voice</li>
-                </ul>
-              </Badge>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="calendarTopSection">
-              <ul>
-                <li className="text-[12px] py-1">{event.title}</li>
-                <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                <li className="text-[12px] py-1">Time : {moment(event.start).format('hh:mm A')} - {moment(event.end).format('hh:mm A')}</li>
-                <li className="text-[12px] py-1">Via : Google Voice</li>
-              </ul>
-            </div>
-            {/* <div className="shadow bg-white" style={{ position: "relative" }}>
-                <strong className="text-black">{event.title}</strong>
-                <p>{event.start.toLocaleString()}</p>
+        <>
+          <div className="calendarTopSection">
+            <Badge badgeContent={event.count > 1 ? event.count : null} color='warning' anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+              <div className="flex flex-col text-black hover:!text-white">
+                <span className="text-[12px] py-1">{event.title}</span>
+                <span className="text-[12px] py-1">Interviewer: Geetha</span>
+                <span className="text-[12px] py-1">Time : {moment(event.start).format('hh:mm A')} - {moment(event.end).format('hh:mm A')}</span>
+                <span className="text-[12px] py-1">Via : Google Voice</span>
               </div>
-              {activeEventModal && <EventDetailModal />} */}
-          </>
-        )
-        }
+            </Badge>
+          </div>
+        </>
+
       </>
     )
   };
   const CustomMeetingEvent = ({ event }) => {
     return (
       <div className="custom-event">
-        <div className="event-title">{event?.title}</div>
-        <div className="text-md">Created By: {event?.created_by}</div>
-        <div className="text-md">interview Date: {' '}{moment(event.start).format('DD-MM-YYYY')}</div>
-        <div className="text-md">interview Time: {' '}{moment(event.start).format('hh:mm A')}-{moment(event.end).format('hh:mm A')}</div>
-        <div className="text-md">Interview via:G-Meet</div>
-        <div className="text-md">Link: {' '}
-          <a href={event?.link} className="font-bold text-[#5e80b5]">{event?.link}</a>
-        </div>
+        <Grid container item>
+          <Grid item xs={8} className="flex flex-col border-r-2 border-[#9e9c9c]">
+            <span className="py-2">{event.title}</span>
+            <span className="text-md py-2">Created By: {event.created_by}</span>
+            <span className="text-md py-2">interview Date: {' '}{moment(event.start).format('DD-MM-YYYY')}</span>
+            <span className="text-md py-2">interview Time: {' '}{moment(event.start).format('hh:mm')}-{moment(event.end).format('hh:mm A')}</span>
+            <span className="text-md py-2">Interview via:G-Meet</span>
+
+          </Grid>
+          <Grid item xs={4}>
+            <div className="flex flex-col mt-3">
+              <div className="ms-2 flex justify-center">
+                <img src={'/image/Gmeet.png'} alt="G-Meet" width={70} height={20} className="bg-slate-300 border-2 border-slate-400" />
+              </div>
+              <div className="mt-2 ms-3">
+                <Button type='primary' className="text-md text-white py-2 bg-[#0a66c2] mt-2 ms-3 hover:bg-[#0a66c2] hover:text-white"
+                  onClick={() => {
+                    if (event?.link) {
+                      window.open(event.link, '_blank');
+                    }
+                  }}
+                >Join
+                </Button>
+              </div>
+            </div>
+          </Grid>
+        </Grid>
       </div>
     )
   }
@@ -363,8 +372,11 @@ export default function P_M_Todo0() {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: '#c9ced6',
-    border: '2px solid transparent',
+    // bgcolor: '#c9ced6',
+    // backdrop: invert(80%);
+    // filter: 'invert(80%)',
+    backdropFilter: 'blur(5px)',
+    // border: '2px solid transparent',
     boxShadow: 24,
     pt: 2,
     px: 4,
@@ -383,6 +395,18 @@ export default function P_M_Todo0() {
     px: 4,
     pb: 3,
   };
+  // const eventPropGetter = (event, start, end, isSelected) => {
+  const eventPropGetter = useCallback(
+    (event, start, end, isSelected) => {
+      const style = {
+        ...(isSelected && {
+          backgroundColor: '#cc261b',
+        }),
+      };
+      return { style };
+    },
+    []
+  );
   // const startDate = getSingleData?.length > 0 ? moment(getSingleData[0]?.start).startOf('week').toDate() : new Date();
   return (
     <section className="">
@@ -448,61 +472,6 @@ export default function P_M_Todo0() {
                 className="d-none d-lg-block "
                 style={{ width: "100%", position: "relative" }}
               >
-
-                {/* <div className="calendarTopSection top-[250px] left-[100px]">
-                  <ul>
-                    <li className="text-[12px] py-1">Python Developer</li>
-                    <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                    <li className="text-[12px] py-1">Time : 10 - 11 A.M</li>
-                    <li className="text-[12px] py-1">Via : Google Voice</li>
-                  </ul>
-                </div>
-
-                <div className="calendarTopSection top-[450px] left-[200px]">
-                  <ul>
-                    <li className="text-[12px] py-1">Python Developer</li>
-                    <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                    <li className="text-[12px] py-1">Time : 10 - 11 A.M</li>
-                    <li className="text-[12px] py-1">Via : Google Voice</li>
-                  </ul>
-                </div>
-
-                <div className="calendarTopSection top-[450px] left-[800px]">
-                  <ul>
-                    <li className="text-[12px] py-1">Python Developer</li>
-                    <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                    <li className="text-[12px] py-1">Time : 10 - 11 A.M</li>
-                    <li className="text-[12px] py-1">Via : Google Voice</li>
-                  </ul>
-                </div>
-
-
-                <div className="calendarTopSection top-[280px] left-[400px]">
-                  <ul>
-                    <li className="text-[12px] py-1">Python Developer</li>
-                    <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                    <li className="text-[12px] py-1">Time : 10 - 11 A.M</li>
-                    <li className="text-[12px] py-1">Via : Google Voice</li>
-                  </ul>
-                </div>
-
-                <div className="calendarTopSection top-[280px] left-[700px]">
-                  <ul>
-                    <li className="text-[12px] py-1">Python Developer</li>
-                    <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                    <li className="text-[12px] py-1">Time : 10 - 11 A.M</li>
-                    <li className="text-[12px] py-1">Via : Google Voice</li>
-                  </ul>
-                </div>
-
-                <div className="calendarTopSection top-[320px] left-[1000px]">
-                  <ul>
-                    <li className="text-[12px] py-1">Python Developer</li>
-                    <li className="text-[12px] py-1">Interviewer: Geetha</li>
-                    <li className="text-[12px] py-1">Time : 10 - 11 A.M</li>
-                    <li className="text-[12px] py-1">Via : Google Voice</li>
-                  </ul>
-                </div> */}
                 <Calendar
                   className="TodoDataTable"
                   selectable
@@ -515,8 +484,8 @@ export default function P_M_Todo0() {
                   timeslots={4}
                   step={15}
                   view={view}
-                  views={{ month: true, week: true, day: true, year: true }} // Show only month, week, and day views
-                  components={view != 'year' ? {
+                  views={{ month: true, week: true, day: true, year: true }}
+                  components={{
                     toolbar: (props) => {
                       return (
                         <CustomToolbar
@@ -528,15 +497,19 @@ export default function P_M_Todo0() {
                         />)
                     },
                     event: CustomEvent
-                  } : ('')}
+                  }}
                   formats={{
-                    dayFormat: "EEEE",
+                    dayFormat: 'dddd',
                   }}
                   onView={setView}
                   onNavigate={setDate}
                   onSelectSlot={handleSelectSlot}
                   onSelectEvent={(event, e) => handleSelect(event?.eventsAtSameTime, e)}
+                  eventPropGetter={eventPropGetter}
+                  showAllEvents={true}
                 />
+
+
               </div>
               {
                 modalEvent?.length > 0 && (
@@ -554,7 +527,7 @@ export default function P_M_Todo0() {
                             <div className="mt-4" key={event?.id}
                               onClick={() => {
                                 setMeetingView(true)
-                                dispatch(getMeetingView({ id: event?.id }))
+                                dispatch(getMeetingView({ id: event.id }))
                               }}
                             >
                               <Grid container>
@@ -582,19 +555,23 @@ export default function P_M_Todo0() {
               }
               <Modal open={meetingView} onClose={() => {
                 setMeetingView(false)
+                setGetSingleData([])
+                setDefaultDate('')
+                setMinDateTime('')
+                setMaxDateTime('')
               }}>
                 <Box sx={{ ...Meetingstyle, width: '60%', height: '70%' }}>
                   <div>
                     {
-                      getSingleData?.length > 0 && (
+                      !meetingLinkDataLoader && getSingleData?.length > 0 ? (
                         <Calendar
-                          className="TodoDataTable"
+                          className="g-meet-view"
                           localizer={localizer}
                           events={getSingleData}
                           startAccessor="start"
                           endAccessor="end"
                           defaultView={"week"}
-                          style={{ height: 600, width: 1200 }}
+                          style={{ height: 600 }}
                           components={{
                             toolbar: (props) => {
                               return (
@@ -603,13 +580,22 @@ export default function P_M_Todo0() {
                               )
                             },
                             event: CustomMeetingEvent,
-                            // header: CustomWeekHeader, 
                           }}
                           formats={{
-                            dayFormat: `dd MMM E`
+                            dayFormat: "DD MMM",
                           }}
-                          defaultDate={DefaultDate || new Date()}
+                          // length={20}
+                          showMultiDayTimes={true}
+                          min={minDateTime}
+                          max={maxDateTime}
+                          // date={moment(DefaultDate).format('DD MMM')}
+                          defaultDate={DefaultDate}
+                        // toolbar={true}
                         />
+                      ) : (
+                        <div className="relative top-[150px] left-[150px] items-center">
+                          <p className="text-black font-bold text-2xl">Data loading...</p>
+                        </div>
                       )
                     }
                   </div>

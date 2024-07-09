@@ -6,7 +6,7 @@ const initialState = {
     data: [],
     error: "",
     loading: false,
-  };
+};
 export const getMeetingView = createAsyncThunk(
     'getMeetingView',
     async ({ id }) => {
@@ -21,19 +21,19 @@ export const getMeetingView = createAsyncThunk(
 );
 
 const getMeetingViewSlice = createSlice({
-    name:'getMeetingView',
+    name: 'getMeetingView',
     initialState,
-    extraReducers:(builder)=>{
-        builder.addCase(getMeetingView.pending,(state,action)=>{
-            state.loading= true;
-            state.data=[]
+    extraReducers: (builder) => {
+        builder.addCase(getMeetingView.pending, (state, action) => {
+            state.loading = true;
+            state.data = []
         })
-        builder.addCase(getMeetingView.fulfilled,(state,action)=>{
-            state.loading= true;
+        builder.addCase(getMeetingView.fulfilled, (state, action) => {
+            state.loading = false;
             state.data = action.payload
         })
-        builder.addCase(getMeetingView.rejected,(state,action)=>{
-            state.loading = true;
+        builder.addCase(getMeetingView.rejected, (state, action) => {
+            state.loading = false;
             state.error = action.error.message;
             state.data = [];
         })
