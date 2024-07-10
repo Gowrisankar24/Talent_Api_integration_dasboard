@@ -26,6 +26,7 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import Modal from '@mui/material/Modal';
 import { getMeetingView } from "@/store/reducers/meetingReducer";
 import { isEmpty } from "lodash";
@@ -393,27 +394,29 @@ export default function P_M_Todo0() {
     // bgcolor: '#c9ced6',
     // backdrop: invert(80%);
     // filter: 'invert(80%)',
-    backdropFilter: 'blur(5px)',
-    // border: '2px solid transparent',
-    boxShadow: 24,
-    pt: 2,
-    px: 4,
-    pb: 3,
-  };
-  const Meetingstyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    // bgcolor: '#c9ced6',
+    // backdropFilter: 'blur(10px)',
     // border: '2px solid transparent',
     // boxShadow: 24,
     pt: 2,
     px: 4,
     pb: 3,
   };
-  console.log('dateee', meetingDate)
+  const Meetingstyle = {
+    position: 'absolute',
+    top: '45%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 300,
+    // height: 500,
+    margin: 3,
+    // bgcolor: '#c9ced6',
+    // border: '2px solid transparent',
+    // boxShadow: 4,
+    // pt: 2,
+    // px: 4,
+    // pb: 3,
+  };
+  console.log('dateee', getSingleData)
   return (
     <section className="">
       <div className="container-fluid my-md-5 my-4">
@@ -521,7 +524,7 @@ export default function P_M_Todo0() {
                     aria-describedby="event-modal-description"
                   >
                     <Box sx={{ ...style, minWidth: '50%', width: '40%', height: '50%' }}>
-                      <h2 id="parent-modal-title">Your Todo`s</h2>
+                      {/* <h2 id="parent-modal-title">Your Todo`s</h2> */}
                       {
                         modalEvent?.map((event, index) => {
                           return (
@@ -566,48 +569,97 @@ export default function P_M_Todo0() {
                   setPrimaryHighlight(null)
                 }
               }}>
-                <Box sx={{ ...Meetingstyle, width: '60%', height: '70%' }}>
-                  <div>
+                <Box sx={{ ...Meetingstyle, width: '45%', height: '70%' }}>
+                  <Card className="custom-event p-2 m-5" >
                     {
                       !meetingLinkDataLoader && getSingleData?.length > 0 ? (
-                        <Calendar
-                          className="g-meet-view"
-                          localizer={localizer}
-                          events={getSingleData}
-                          startAccessor="start"
-                          endAccessor="end"
-                          defaultView={"week"}
-                          views={['week']}
-                          style={{ height: 600 }}
-                          components={{
-                            toolbar: (props) => {
-                              return (
-                                <CustomMeetToolBar
-                                  {...props} />
-                              )
-                            },
-                            event: CustomMeetingEvent,
-                          }}
-                          formats={{
-                            dayFormat: "DD MMM",
-                          }}
-                          length={2}
-                          showMultiDayTimes={true}
-                          min={minDateTime}
-                          max={maxDateTime}
-                          date={meetingDate}
+                        // <Calendar
+                        //   className="g-meet-view"
+                        //   localizer={localizer}
+                        //   events={getSingleData}
+                        //   startAccessor="start"
+                        //   endAccessor="end"
+                        //   defaultView={"week"}
+                        //   views={['week']}
+                        //   style={{ height: 600 }}
+                        //   components={{
+                        //     toolbar: (props) => {
+                        //       return (
+                        //         <CustomMeetToolBar
+                        //           {...props} />
+                        //       )
+                        //     },
+                        //     event: CustomMeetingEvent,
+                        //   }}
+                        //   formats={{
+                        //     dayFormat: "DD MMM",
+                        //   }}
+                        //   length={2}
+                        //   showMultiDayTimes={true}
+                        //   min={minDateTime}
+                        //   max={maxDateTime}
+                        //   date={meetingDate}
 
-                          onNavigate={(newDate) => setMeetingDate(newDate)}
-                          defaultDate={DefaultDate}
-                        // toolbar={true}
-                        />
+                        //   onNavigate={(newDate) => setMeetingDate(newDate)}
+                        //   defaultDate={DefaultDate}
+                        // // toolbar={true}
+                        // />
+
+
+                        <Grid container item className="m-1 border-2 border-[#dcd3d3] p-3 border-collapse">
+                          <Grid item xs={6} className="flex flex-col border-r-2 border-[#dcd3d3]">
+                            <span className="text-lg py-2">Interview with: {' '}{getSingleData[0]?.title}</span>
+                            <span className="text-lg py-2">Created By: {getSingleData[0]?.created_by}</span>
+                            <span className="text-lg py-2">Interview Date: {' '}{moment(getSingleData[0]?.start).format('DD-MM-YYYY')}</span>
+                            <span className="text-lg py-2">Interview Time: {' '}{moment(getSingleData[0]?.start).format('hh:mm')}-{moment(event.end).format('hh:mm A')}</span>
+                            <span className="text-lg py-2">Interview via:G-Meet</span>
+                            <span className="justify-center py-2">
+                              <Button type='primary' className="text-lg text-[#0a66c2] p-2 bg-transparent border-2 border-solid border-[#0a66c2] hover:text-[#0a66c2]">
+                                Resume.docx
+                                <span className="ms-2">
+                                  <RemoveRedEyeOutlinedIcon />
+                                </span>
+                              </Button>
+                            </span>
+                            <span className="justify-center py-2">
+                              <Button type='primary' className="text-lg text-[#0a66c2] p-2 bg-transparent border-2 border-solid border-[#0a66c2] hover:text-[#0a66c2]">
+                                Aadhaar
+                                <span className="ms-2">
+                                  <RemoveRedEyeOutlinedIcon />
+                                </span>
+                              </Button>
+
+                            </span>
+                          </Grid>
+                          <Grid item xs={6} className="flex flex-col mt-3 justify-center" >
+                            <div className="items-center ms-3 p-5">
+                              <div>
+                                <img src={'/image/Gmeet.png'} alt="G-Meet" width={150} height={40} className="bg-slate-300 border-2 border-slate-400 ms-3 cursor-pointer p-3" onClick={() => {
+                                  if (getSingleData[0]?.link) {
+                                    window.open(getSingleData[0]?.link, '_blank');
+                                  }
+                                }} />
+                              </div>
+                              <div className="mt-5 ms-5">
+                                <Button type='primary' size="large" className="text-md text-white bg-[#0a66c2] cursor-pointer hover:bg-[#0a66c2] hover:text-white"
+                                  onClick={() => {
+                                    if (getSingleData[0]?.link) {
+                                      window.open(getSingleData[0]?.link, '_blank');
+                                    }
+                                  }}
+                                >Join
+                                </Button>
+                              </div>
+                            </div>
+                          </Grid>
+                        </Grid>
                       ) : (
                         <div className="relative top-[150px] left-[150px] items-center">
                           <p className="text-black font-bold text-2xl">Data loading...</p>
                         </div>
                       )
                     }
-                  </div>
+                  </Card>
                 </Box>
               </Modal>
             </div>

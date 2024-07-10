@@ -89,10 +89,7 @@
 }
 .custom-event{
   background-color: #f5f4f4;
-  border: 1px solid #ece6e6;
-  padding: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
+  /* cursor: pointer; */
   border-radius: 4px;
   transition: background-color 0.3s ease;
   /* width: 20vw; */
