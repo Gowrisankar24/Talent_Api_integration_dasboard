@@ -88,8 +88,8 @@
   background-color: #fafbfc !important;
 }
 .custom-event{
-  background-color: #e7e5e5;
-  border: 1px solid #e7e5e5;
+  background-color: #f5f4f4;
+  border: 1px solid #ece6e6;
   padding: 10px;
   margin-bottom: 10px;
   cursor: pointer;
@@ -103,12 +103,14 @@
   margin-bottom: 5px;
 } */
 
-.bg-highlight{
-  background: #000;
-}
 .g-meet-view.rbc-calendar{
   overflow: auto;
 }
 .g-meet-view.rbc-calendar .rbc-time-view{
   width: 3000px;
+}
+
+.bg-highlight{
+  background: #5782c3 !important;
+  color: #fff !important;
 }

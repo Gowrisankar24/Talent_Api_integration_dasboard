@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale";
@@ -28,7 +28,6 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Modal from '@mui/material/Modal';
 import { getMeetingView } from "@/store/reducers/meetingReducer";
-import GMeetLogo from '../../../public/image/Gmeet.png'
 import { isEmpty } from "lodash";
 const locales = {
   "en-US": enUS,
@@ -49,14 +48,20 @@ export default function P_M_Todo0() {
   const [selectedMonth, setSelectedMonth] = useState(moment().format('MMMM'));
   const [selectedYear, setSelectedYear] = useState(moment().format('YYYY'));
   const [activeEventModal, setActiveEventModal] = useState(false);
+  const [primaryHighlight, setPrimaryHighlight] = useState(null);
+  const [eventOneID, setEventOneID] = useState(null)
+  const [secondaryHighlight, setSecondaryHighlight] = useState(null)
+  const [higlight, setHighlight] = useState(false)
   const [meetingView, setMeetingView] = useState(false);
   const [modalEvent, setModalEvent] = useState([]);
   const [getSingleData, setGetSingleData] = useState([])
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [events, setEvents] = useState([]);
+  const [primaryData, setprimaryData] = useState([]);
+  const [eventConcat, setEventConcat] = useState([])
   const [DefaultDate, setDefaultDate] = useState('')
   const [minDateTime, setMinDateTime] = useState('')
   const [maxDateTime, setMaxDateTime] = useState('')
+  const [meetingDate, setMeetingDate] = useState(new Date())
   const calenderOneData = useSelector((state) => state?.calender_1_Slice?.data);
   const calenderOneDataLoader = useSelector((state) => state?.calender_1_Slice?.loading);
   const meetingLinkData = useSelector((state) => state?.getMeetingViewSlice?.data);
@@ -68,27 +73,53 @@ export default function P_M_Todo0() {
     setDate(newDate)
     setActiveEventModal(false)
     setMeetingView(false)
+    setPrimaryHighlight(null)
     dispatch(getCalenderview_1({ from_date: moment(newDate).startOf('week').format('YYYY-MM-DD'), to_date: moment(newDate).endOf('week').format('YYYY-MM-DD') }));
   }, [])
 
   useEffect(() => {
+    setPrimaryHighlight(null)
     if (!isEmpty(calenderOneData)) {
       const eventsmap = calenderOneData?.map((event) => ({
-        id: event?.id,
-        title: event?.summary,
-        desc: event?.desc,
-        start: new Date(event?.start),
-        end: new Date(event?.end),
-        attendees: event?.attendees,
-        status: event?.status,
-        comment: event?.comment,
-        link: event?.link
+        id: event.id,
+        title: event.summary,
+        desc: event.desc,
+        start: new Date(event.start),
+        end: new Date(event.end),
+        attendees: event.attendees,
+        status: event.status,
+        comment: event.comment,
+        link: event.link
       }));
-      setEvents(eventsmap)
+
+      setprimaryData(eventsmap)
     } else {
-      setEvents([])
+      setprimaryData([])
+      setEventConcat([])
     }
   }, [calenderOneData])
+
+  useEffect(() => {
+    if (!isEmpty(primaryData)) {
+      const groupedEvents = primaryData && primaryData?.reduce((groups, event) => {
+        const key = moment(event.start).format('YYYY-MM-DDTHH:mm:ss')// Use timestamp as key for grouping
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+        groups[key].push(event);
+        return groups;
+      }, {});
+      const eventsWithCount = Object.values(groupedEvents)?.map(eventsAtSameTime => {
+        const firstEvent = eventsAtSameTime[0];
+        return {
+          ...firstEvent,
+          count: eventsAtSameTime.length,
+          eventsAtSameTime
+        };
+      });
+      setEventConcat(eventsWithCount)
+    }
+  }, [calenderOneData, primaryData])
   useEffect(() => {
     if (!isEmpty(meetingLinkData)) {
       const eventsmap = {
@@ -106,6 +137,7 @@ export default function P_M_Todo0() {
       };
       setDefaultDate(moment(meetingLinkData?.start).startOf('day').toDate())
       setMinDateTime(moment(meetingLinkData?.start).toDate())
+      setMeetingDate(moment(meetingLinkData?.start).toDate())
       setMaxDateTime(moment(meetingLinkData?.start).endOf('day').toDate())
       setGetSingleData([eventsmap]);
     } else {
@@ -175,9 +207,12 @@ export default function P_M_Todo0() {
     if (event?.length > 1) {
       setModalEvent(event)
       setActiveEventModal(true);
+      setPrimaryHighlight(event[0].id)
     } else if (event?.length == 1) {
       setMeetingView(true)
       setActiveEventModal(false)
+      setPrimaryHighlight(event[0].id)
+      setHighlight(true)
       dispatch(getMeetingView({ id: event[0]?.id }))
     }
     // setPosition({ x: e.clientX, y: e.clientY });
@@ -214,58 +249,42 @@ export default function P_M_Todo0() {
     updateDate(new Date(), 'day')
     // dispatch(getCalenderview_1({ from_date: moment().format('YYYY-MM-DD'), to_date: moment().format('YYYY-MM-DD')}))
   };
-  const groupedEvents = events && events?.reduce((groups, event) => {
-    const key = moment(event.start).format('YYYY-MM-DDTHH:mm:ss')// Use timestamp as key for grouping
-    if (!groups[key]) {
-      groups[key] = [];
-    }
-    groups[key].push(event);
-    return groups;
-  }, {});
-  const eventsWithCount = Object.values(groupedEvents)?.map(eventsAtSameTime => {
-    const firstEvent = eventsAtSameTime[0];
-    return {
-      ...firstEvent,
-      count: eventsAtSameTime.length,
-      eventsAtSameTime
-    };
-  });
+
   // Custom Event Component
   const CustomEvent = ({ event }) => {
     return (
-      <>
-        <>
-          <div className="calendarTopSection">
-            <Badge badgeContent={event.count > 1 ? event.count : null} color='warning' anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-              <div className="flex flex-col text-black hover:!text-white">
-                <span className="text-[12px] py-1">{event.title}</span>
-                <span className="text-[12px] py-1">Interviewer: Geetha</span>
-                <span className="text-[12px] py-1">Time : {moment(event.start).format('hh:mm A')} - {moment(event.end).format('hh:mm A')}</span>
-                <span className="text-[12px] py-1">Via : Google Voice</span>
-              </div>
-            </Badge>
+      <div className={`calendarTopSection ${primaryHighlight === event.id ? 'bg-highlight' : ''}`} key={event.id}>
+        <Badge badgeContent={event.count > 1 ? event.count : null} color='warning' anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+          <div className="flex flex-col text-black hover:!text-white">
+            <span className="text-[12px] py-1">{event.title}</span>
+            <span className="text-[12px] py-1">Interviewer: Geetha</span>
+            <span className="text-[12px] py-1">Time : {moment(event.start).format('hh:mm A')} - {moment(event.end).format('hh:mm A')}</span>
+            <span className="text-[12px] py-1">Via : Google Voice</span>
           </div>
-        </>
-
-      </>
+        </Badge>
+      </div>
     )
   };
   const CustomMeetingEvent = ({ event }) => {
     return (
       <div className="custom-event">
         <Grid container item>
-          <Grid item xs={8} className="flex flex-col border-r-2 border-[#9e9c9c]">
-            <span className="py-2">{event.title}</span>
+          <Grid item xs={8} className="flex flex-col border-r-2 border-[#dcd3d3]">
+            <span className="py-2">Interview with: {' '}{event.title}</span>
             <span className="text-md py-2">Created By: {event.created_by}</span>
-            <span className="text-md py-2">interview Date: {' '}{moment(event.start).format('DD-MM-YYYY')}</span>
-            <span className="text-md py-2">interview Time: {' '}{moment(event.start).format('hh:mm')}-{moment(event.end).format('hh:mm A')}</span>
+            <span className="text-md py-2">Interview Date: {' '}{moment(event.start).format('DD-MM-YYYY')}</span>
+            <span className="text-md py-2">Interview Time: {' '}{moment(event.start).format('hh:mm')}-{moment(event.end).format('hh:mm A')}</span>
             <span className="text-md py-2">Interview via:G-Meet</span>
 
           </Grid>
           <Grid item xs={4}>
             <div className="flex flex-col mt-3">
               <div className="ms-2 flex justify-center">
-                <img src={'/image/Gmeet.png'} alt="G-Meet" width={70} height={20} className="bg-slate-300 border-2 border-slate-400" />
+                <img src={'/image/Gmeet.png'} alt="G-Meet" width={70} height={20} className="bg-slate-300 border-2 border-slate-400" onClick={() => {
+                  if (event?.link) {
+                    window.open(event.link, '_blank');
+                  }
+                }} />
               </div>
               <div className="mt-2 ms-3">
                 <Button type='primary' className="text-md text-white py-2 bg-[#0a66c2] mt-2 ms-3 hover:bg-[#0a66c2] hover:text-white"
@@ -310,7 +329,6 @@ export default function P_M_Todo0() {
                 const prevDate = moment(date).subtract(1, view === 'month' ? 'months' : view === 'week' ? 'weeks' : 'days').toDate();
                 onNavigate('PREV')
                 updateDate(prevDate, view);
-
               }
               }>
                 <NavigateBeforeIcon />
@@ -390,24 +408,12 @@ export default function P_M_Todo0() {
     width: 400,
     // bgcolor: '#c9ced6',
     // border: '2px solid transparent',
-    boxShadow: 24,
+    // boxShadow: 24,
     pt: 2,
     px: 4,
     pb: 3,
   };
-  // const eventPropGetter = (event, start, end, isSelected) => {
-  const eventPropGetter = useCallback(
-    (event, start, end, isSelected) => {
-      const style = {
-        ...(isSelected && {
-          backgroundColor: '#cc261b',
-        }),
-      };
-      return { style };
-    },
-    []
-  );
-  // const startDate = getSingleData?.length > 0 ? moment(getSingleData[0]?.start).startOf('week').toDate() : new Date();
+  console.log('dateee', meetingDate)
   return (
     <section className="">
       <div className="container-fluid my-md-5 my-4">
@@ -472,67 +478,63 @@ export default function P_M_Todo0() {
                 className="d-none d-lg-block "
                 style={{ width: "100%", position: "relative" }}
               >
+
                 <Calendar
                   className="TodoDataTable"
-                  selectable
+                  // selectable
                   localizer={localizer}
-                  events={eventsWithCount}
+                  events={eventConcat}
                   startAccessor="start"
                   endAccessor="end"
                   style={{ height: 1000 }}
-                  defaultView={"month"}
+                  defaultView={"week"}
                   timeslots={4}
                   step={15}
                   view={view}
+                  date={date}
                   views={{ month: true, week: true, day: true, year: true }}
                   components={{
-                    toolbar: (props) => {
-                      return (
-                        <CustomToolbar
-                          {...props}
-                          date={date}
-                          view={view}
-                          onView={setView}
-                          onNavigate={setDate}
-                        />)
-                    },
-                    event: CustomEvent
+                    toolbar: (props) => <CustomToolbar {...props} date={date} view={view} onView={setView} onNavigate={setDate} />,
+                    event: CustomEvent,
                   }}
-                  formats={{
-                    dayFormat: 'dddd',
-                  }}
-                  onView={setView}
-                  onNavigate={setDate}
-                  onSelectSlot={handleSelectSlot}
-                  onSelectEvent={(event, e) => handleSelect(event?.eventsAtSameTime, e)}
-                  eventPropGetter={eventPropGetter}
+                  // formats={{
+                  //   dayFormat: 'ddd D',
+                  // }}
+                  onView={(view) => setView(view)}
+                  onNavigate={(date) => setDate(date)}
+                  // onSelectSlot={handleSelectSlot}
+                  onSelectEvent={(event, e) =>
+                    handleSelect(event?.eventsAtSameTime, e)
+                  }
                   showAllEvents={true}
                 />
-
-
               </div>
               {
                 modalEvent?.length > 0 && (
                   <Modal
                     open={activeEventModal}
-                    onClose={() => setActiveEventModal(false)}
+                    onClose={() => {
+                      setActiveEventModal(false)
+                      setPrimaryHighlight(null)
+                    }}
                     aria-labelledby="event-modal-title"
                     aria-describedby="event-modal-description"
                   >
-                    <Box sx={{ ...style, minWidth: '60%', width: '60%', height: '50%' }}>
+                    <Box sx={{ ...style, minWidth: '50%', width: '40%', height: '50%' }}>
                       <h2 id="parent-modal-title">Your Todo`s</h2>
                       {
                         modalEvent?.map((event, index) => {
                           return (
                             <div className="mt-4" key={event?.id}
                               onClick={() => {
+                                setSecondaryHighlight(event.id)
                                 setMeetingView(true)
                                 dispatch(getMeetingView({ id: event.id }))
                               }}
                             >
                               <Grid container>
                                 <Grid item xs={8}>
-                                  <Card sx={{ width: '50%' }} className="border-l-[13px] !border-l-[#0A66C2] p-1 ms-4 cursor-pointer hover:bg-[#0A66C2] hover:!text-white">
+                                  <Card sx={{ width: '50%' }} className={`border-l-[13px] !border-l-[#0A66C2] p-1 ms-4 cursor-pointer hover:bg-[#0A66C2] hover:!text-white ${secondaryHighlight == event.id ? 'bg-highlight' : ''}`}>
                                     <div className="pl-2">
                                       <p className="text-[12px] py-1"> {event?.title}</p>
                                       <p className="text-[12px] py-1">Interviewer: Geetha</p>
@@ -559,6 +561,10 @@ export default function P_M_Todo0() {
                 setDefaultDate('')
                 setMinDateTime('')
                 setMaxDateTime('')
+                setSecondaryHighlight(null)
+                if (!activeEventModal) {
+                  setPrimaryHighlight(null)
+                }
               }}>
                 <Box sx={{ ...Meetingstyle, width: '60%', height: '70%' }}>
                   <div>
@@ -571,6 +577,7 @@ export default function P_M_Todo0() {
                           startAccessor="start"
                           endAccessor="end"
                           defaultView={"week"}
+                          views={['week']}
                           style={{ height: 600 }}
                           components={{
                             toolbar: (props) => {
@@ -584,11 +591,13 @@ export default function P_M_Todo0() {
                           formats={{
                             dayFormat: "DD MMM",
                           }}
-                          // length={20}
+                          length={2}
                           showMultiDayTimes={true}
                           min={minDateTime}
                           max={maxDateTime}
-                          // date={moment(DefaultDate).format('DD MMM')}
+                          date={meetingDate}
+
+                          onNavigate={(newDate) => setMeetingDate(newDate)}
                           defaultDate={DefaultDate}
                         // toolbar={true}
                         />
@@ -602,22 +611,12 @@ export default function P_M_Todo0() {
                 </Box>
               </Modal>
             </div>
-
           </div>
-
         </div>
       </div>
     </section>
   );
 }
-
-// const CustomEvent = (event:any) => {
-//   console.log(event,"sadfsdfsd")
-//   return (
-//     <span> <strong> {event.title} </strong> </span>
-//   )
-// }
-// Custom Toolbar Component
 const CustomToolbar = ({ label }) => {
   return (
     <div className="custom-toolbar ">
